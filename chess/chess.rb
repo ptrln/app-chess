@@ -15,7 +15,7 @@ class Chess #Game class
       if board.try_move?(player.color, from_pos, to_pos)
         turns.reverse!
 
-        if board.checkmate?(turns.first.color) || board.draw?
+        if board.checkmate?(turns.first.color) || board.stalemate?(turns.first.color) || board.draw?
           player.end_game(board)
           break
         end
@@ -26,4 +26,4 @@ class Chess #Game class
   end
 end
 
-Chess.play(HumanPlayer.new("James"), ComputerPlayer.new)
+Chess.play(AdvancedComputerPlayer.new, ComputerPlayer.new)

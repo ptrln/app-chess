@@ -37,7 +37,7 @@ class Board
   def self.coord_to_chess(coord)
     alpha = (coord[1] + 'a'.ord).chr
     digit = (8 - coord[0]).to_s
-    alpha + digit
+    return alpha + digit
   end
 
   def valid_from?(player_color, from)
@@ -58,9 +58,13 @@ class Board
   end
 
   def move_into_check?(player_color, from, to)
+    trial_board(from, to).check?(player_color)
+  end
+
+  def trial_board(from, to)
     check_board = self.dup
     check_board.commit_move(from, to)
-    check_board.check?(player_color)
+    check_board
   end
 
   def [](coord)
@@ -97,7 +101,18 @@ class Board
     raise "KingNotFoundError"
   end
 
-  def checkmate?(checked_color)  # doesn't work!
+  def checkmate?(checked_color)
+    return false unless check?(checked_color)
+    all_possible_moves(checked_color).each do |from, possible_moves|
+      possible_moves.each do |pos_move|
+        return false unless move_into_check?(checked_color, from, pos_move)
+      end
+    end
+    true
+  end
+
+  def stalemate?(checked_color)
+    return false if check?(checked_color)
     all_possible_moves(checked_color).each do |from, possible_moves|
       possible_moves.each do |pos_move|
         return false unless move_into_check?(checked_color, from, pos_move)
@@ -127,7 +142,16 @@ class Board
   end
 
   def draw?
-    false #TODO
+    kings_count = 0
+    others_count = 0
+    self.each_piece_with_coord do |piece, coord|
+      if piece.is_a?(King)
+        kings_count += 1
+      else
+        others_count += 1
+      end
+    end
+    others_count == 0 && kings_count == 2
   end
 
   def dup
