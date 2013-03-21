@@ -77,8 +77,14 @@ class AdvancedComputerPlayer < ComputerPlayer
     trimmed = trim_harmful_moves(board, all_pos)
     b = board
 
-    check_move(b, trimmed) || take_move(b, trimmed) || random_move(b, trimmed) ||
-      check_move(b, all_pos) || take_move(b, all_pos) || random_move(b, all_pos)
+    check_move(b, trimmed) ||
+      take_move(b, trimmed) ||
+      avoidance_move(b, trimmed) ||
+      random_move(b, trimmed) ||
+      check_move(b, all_pos) ||
+      take_move(b, all_pos) ||
+      avoidance_move(b, all_pos) ||
+      random_move(b, all_pos)
   end
 
   def trim_harmful_moves(board, all_possible_moves)
@@ -99,6 +105,19 @@ class AdvancedComputerPlayer < ComputerPlayer
       return true if possible_to.include?(to)
     end
     false
+  end
+
+  def avoidance_move(board, all_possible_moves)
+    all_possible_moves.each do |from, possible_to|
+      possible_to.each do |to|
+        oppo_moves = board.all_possible_moves(opponent_color)
+        oppo_moves.each do |ignore, oppo_to|
+
+          return Board.coord_to_chess(from), Board.coord_to_chess(possible_to.sample) if possible_to.include?(from)
+        end
+      end
+    end
+    nil
   end
 
   def check_move(board, all_possible_moves)

@@ -29,12 +29,14 @@ class Board
   end
 
   def self.chess_to_coord(chess)
+    return nil, nil if chess.nil?
     row = 8 - chess[1].to_i
     col = (chess[0].downcase).ord - 'a'.ord
     return row, col
   end
 
   def self.coord_to_chess(coord)
+    return nil if coord.nil?
     alpha = (coord[1] + 'a'.ord).chr
     digit = (8 - coord[0]).to_s
     return alpha + digit
@@ -77,6 +79,7 @@ class Board
 
   #returns true if move successful, else false
   def try_move?(player_color, from, to)
+    return false if from.nil? || to.nil?
     if valid_move?(player_color, from, to)
       commit_move(from, to)
       true

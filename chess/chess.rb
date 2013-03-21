@@ -27,3 +27,5 @@ class Chess #Game class
 end
 
 Chess.play(AdvancedComputerPlayer.new, ComputerPlayer.new)
+
+#Chess.play(HumanPlayer.new("Peter"), AdvancedComputerPlayer.new)
